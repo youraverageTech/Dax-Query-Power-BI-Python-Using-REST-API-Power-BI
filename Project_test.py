@@ -4,7 +4,7 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 
-# 2. Authenticate (Interactive login for Mac)
+# 1. Authenticate
 def authentication(client_id, authority, client_secret):
     app = msal.ConfidentialClientApplication(
         client_id,
@@ -21,7 +21,7 @@ def authentication(client_id, authority, client_secret):
 
     return access_token
     
-    # 3. Your DAX Query
+# 2. DAX Query
 def execute_dax_query(access_token, dataset_id, dax_query):
     url = f"https://api.powerbi.com/v1.0/myorg/datasets/{dataset_id}/executeQueries"
 
@@ -32,10 +32,9 @@ def execute_dax_query(access_token, dataset_id, dax_query):
     dax_query = {
             "queries": [{"query": dax_query}],
         "serializerSettings": {
-            "includeNulls": True} # Put your full DAX here
+            "includeNulls": True}
         }
-        
-        # 4. Execute
+    
     response = requests.post(url, json=dax_query, headers=headers)
 
     if response.status_code != 200:
@@ -46,12 +45,12 @@ def execute_dax_query(access_token, dataset_id, dax_query):
 
     return result
     
-    # 5. Parse to Pandas
+# 3. Parse to Pandas
 def parse_to_pandas(result):
     data = result['results'][0]['tables'][0]['rows']
     return pd.DataFrame(data)
 
-
+# 4. multiple dax executor
 def multiple_execute_dax_query(access_token, dataset_id, query_dict, export=True, export_format="csv"):
     results = {}
     for query_name, query_dax in query_dict.items():
@@ -71,18 +70,18 @@ def multiple_execute_dax_query(access_token, dataset_id, query_dict, export=True
             results[query_name] = pd.DataFrame()
     return results
 
-def export_to_excel_multisheet(results_dict, filename="hasil_semua_query.xlsx"):
-    """Ekspor semua DataFrame ke satu file Excel, masing-masing jadi sheet."""
+# 5. export to excel file
+def export_to_excel_multisheet(results_dict, filename="all_output.xlsx"):
+    
     with pd.ExcelWriter(filename, engine="openpyxl") as writer:
         for sheet_name, df in results_dict.items():
             if not df.empty:
-                # Excel sheet name max 31 karakter
                 safe_name = sheet_name[:31]
                 df.to_excel(writer, sheet_name=safe_name, index=False)
-    print(f"Semua hasil disimpan ke: {filename}")
+    print(f"All file successfully load to: {filename}")
 
 if __name__ == "__main__":
-    # 1. Configuration
+    # 6. Configuration
     load_dotenv()
     client_id = os.getenv("client_id")
     tenant_id = os.getenv("tenant_id")
@@ -347,7 +346,7 @@ ORDER BY
 
     export_to_excel_multisheet(all_results, filename="all_output.xlsx")
 
-    print("\nPreview masing-masing hasil:")
+    print("\nPreview output:")
     for name, df in all_results.items():
         print(f"\n[{name}]")
         print(df.head(3))
