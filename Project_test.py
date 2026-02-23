@@ -90,6 +90,7 @@ if __name__ == "__main__":
     AUTHORITY = f"https://login.microsoftonline.com/{tenant_id}"
     SCOPE = ["https://analysis.windows.net/powerbi/api/.default"]
     
+	# 7. Query DAX
     query_dict = {
         "query-1" : """
 DEFINE 
@@ -334,7 +335,7 @@ ORDER BY
 	[IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
 """
     }
-
+	# 8. Execute Query
     access_token = authentication(client_id, AUTHORITY, client_secret)
     all_results = multiple_execute_dax_query(
         access_token=access_token,
@@ -343,7 +344,7 @@ ORDER BY
         export=False,
         export_format="csv"
     )
-
+	# 9. Export Output
     export_to_excel_multisheet(all_results, filename="all_output.xlsx")
 
     print("\nPreview output:")
