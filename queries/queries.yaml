@@ -1,0 +1,239 @@
+query-1: |-
+  DEFINE 
+  VAR __DS0FilterTable =
+  TREATAS({"February"}, 'dim_date'[Month Name])
+
+  EVALUATE
+      SUMMARIZECOLUMNS(
+          __DS0FilterTable,
+          "Total_YTD", IGNORE([Total YTD]),
+          "Target_YTD", IGNORE([Target YTD]),
+          "Total_YTD_Last_Year", IGNORE([Total YTD Last Year]),
+          "Target_YTD_Last_Year", IGNORE([Target YTD Last Year]),
+          "Varriance", IGNORE([Varriance]),
+          "Last_Year_Varriance", IGNORE([Last Year Varriance]),
+          "YoY_Growth", IGNORE([YoY Growth]),
+          "v__Varriance", IGNORE([% Varriance]),
+          "v__Varriance_Last_Year", IGNORE([% Varriance Last Year]),
+          "v__YoY_Growth", IGNORE([% YoY Growth]))
+
+query-2: |-
+  DEFINE
+    VAR __DS0FilterTable = 
+      TREATAS({"February"}, 'dim_date'[Month Name])
+
+    VAR __DS0Core = 
+      SUMMARIZECOLUMNS(
+        ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
+        __DS0FilterTable,
+        "Total_YTD", [Total YTD],
+        "Target_YTD", [Target YTD],
+        "Total_YTD_Last_Year", [Total YTD Last Year],
+        "Target_YTD_Last_Year", [Target YTD Last Year],
+        "Varriance", [Varriance],
+        "Last_Year_Varriance", [Last Year Varriance],
+        "YoY_Growth", [YoY Growth],
+        "v__Varriance", [% Varriance],
+        "v__Varriance_Last_Year", [% Varriance Last Year],
+        "v__YoY_Growth", [% YoY Growth]
+      )
+
+    VAR __DS0PrimaryWindowed = 
+      TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
+
+  EVALUATE
+    __DS0PrimaryWindowed
+
+  ORDER BY
+    [IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
+
+query-3: |-
+  DEFINE VAR __DS0FilterTable =
+    TREATAS({"February"}, 'dim_date'[Month Name])
+
+  EVALUATE
+    SUMMARIZECOLUMNS(
+        __DS0FilterTable,
+        "Total_YTD", IGNORE([Total YTD]),
+        "Varriance", IGNORE([Varriance]),
+        "Target_YTD", IGNORE([Target YTD]),
+        "v__Varriance", IGNORE([% Varriance]))
+
+query-4: |-
+  DEFINE VAR __DS0FilterTable = 
+    TREATAS({"February"}, 'dim_date'[Month Name])
+    VAR __ValueFilterDM1 = 
+      FILTER(
+        KEEPFILTERS(
+          SUMMARIZECOLUMNS(
+            'dim_product'[product_name],
+            __DS0FilterTable,
+            "Total_YTD", [Total YTD],
+            "Target_YTD", [Target YTD],
+            "Achievment_Status", [Achievment Status],
+            "Varriance", [Varriance],
+            "v__Varriance", [% Varriance]
+          )
+        ),
+        [Achievment_Status] = "Achieved"
+      )
+
+    VAR __DS0Core = 
+      SUMMARIZECOLUMNS(
+        ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
+        __DS0FilterTable,
+        __ValueFilterDM1,
+        "Total_YTD", [Total YTD],
+        "Target_YTD", [Target YTD],
+        "Achievment_Status", [Achievment Status],
+        "Varriance", [Varriance],
+        "v__Varriance", [% Varriance]
+      )
+
+    VAR __DS0PrimaryWindowed = 
+      TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
+
+  EVALUATE
+    __DS0PrimaryWindowed
+
+  ORDER BY
+    [IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
+
+query-5: |-
+  DEFINE
+  VAR __DS0FilterTable = 
+  TREATAS({"February"}, 'dim_date'[Month Name])
+
+  VAR __ValueFilterDM1 = 
+  FILTER(
+    KEEPFILTERS(
+      SUMMARIZECOLUMNS(
+        'dim_product'[product_name],
+        __DS0FilterTable,
+        "Total_YTD", [Total YTD],
+        "Target_YTD", [Target YTD],
+        "Achievment_Status", [Achievment Status],
+        "Varriance", [Varriance],
+        "v__Varriance", [% Varriance]
+      )
+    ),
+    [Achievment_Status] <> "Achieved"
+  )
+
+  VAR __DS0Core = 
+    SUMMARIZECOLUMNS(
+      ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
+      __DS0FilterTable,
+      __ValueFilterDM1,
+      "Total_YTD", [Total YTD],
+      "Target_YTD", [Target YTD],
+      "Achievment_Status", [Achievment Status],
+      "Varriance", [Varriance],
+      "v__Varriance", [% Varriance]
+    )
+
+  VAR __DS0PrimaryWindowed = 
+    TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
+
+  EVALUATE
+    __DS0PrimaryWindowed
+
+  ORDER BY
+    [IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
+
+query-6: |-
+  DEFINE 
+    VAR __DS0FilterTable =
+    TREATAS({"February"}, 'dim_date'[Month Name])
+
+  EVALUATE
+      SUMMARIZECOLUMNS(
+          __DS0FilterTable,
+          "Total_YTD_Last_Year", IGNORE([Total YTD Last Year]),
+          "Target_YTD_Last_Year", IGNORE([Target YTD Last Year]),
+          "Last_Year_Varriance", IGNORE([Last Year Varriance]),
+          "v__Varriance_Last_Year", IGNORE([% Varriance Last Year]))
+
+query-7: |-
+  DEFINE
+  VAR __DS0FilterTable = 
+    TREATAS({"February"}, 'dim_date'[Month Name])
+
+  VAR __ValueFilterDM1 = 
+    FILTER(
+      KEEPFILTERS(
+        SUMMARIZECOLUMNS(
+          'dim_product'[product_name],
+          __DS0FilterTable,
+          "Total_YTD_Last_Year", [Total YTD Last Year],
+          "Target_YTD_Last_Year", [Target YTD Last Year],
+          "Last_Year_Varriance", [Last Year Varriance],
+          "v__Varriance_Last_Year", [% Varriance Last Year],
+          "Achievment_Measure_Last_year", [Achievment Measure Last year]
+        )
+      ),
+      [Achievment_Measure_Last_year] = "Achieved"
+    )
+
+  VAR __DS0Core = 
+    SUMMARIZECOLUMNS(
+      ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
+      __DS0FilterTable,
+      __ValueFilterDM1,
+      "Total_YTD_Last_Year", [Total YTD Last Year],
+      "Target_YTD_Last_Year", [Target YTD Last Year],
+      "Last_Year_Varriance", [Last Year Varriance],
+      "v__Varriance_Last_Year", [% Varriance Last Year],
+      "Achievment_Measure_Last_year", [Achievment Measure Last year]
+    )
+
+  VAR __DS0PrimaryWindowed = 
+    TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
+
+  EVALUATE
+    __DS0PrimaryWindowed
+
+  ORDER BY
+    [IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
+
+query-8: |-
+  DEFINE
+  VAR __DS0FilterTable = 
+    TREATAS({"February"}, 'dim_date'[Month Name])
+
+  VAR __ValueFilterDM1 = 
+    FILTER(
+      KEEPFILTERS(
+        SUMMARIZECOLUMNS(
+          'dim_product'[product_name],
+          __DS0FilterTable,
+          "Total_YTD_Last_Year", [Total YTD Last Year],
+          "Target_YTD_Last_Year", [Target YTD Last Year],
+          "Last_Year_Varriance", [Last Year Varriance],
+          "v__Varriance_Last_Year", [% Varriance Last Year],
+          "Achievment_Measure_Last_year", [Achievment Measure Last year]
+        )
+      ),
+      [Achievment_Measure_Last_year] <> "Achieved"
+    )
+
+  VAR __DS0Core = 
+    SUMMARIZECOLUMNS(
+      ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
+      __DS0FilterTable,
+      __ValueFilterDM1,
+      "Total_YTD_Last_Year", [Total YTD Last Year],
+      "Target_YTD_Last_Year", [Target YTD Last Year],
+      "Last_Year_Varriance", [Last Year Varriance],
+      "v__Varriance_Last_Year", [% Varriance Last Year],
+      "Achievment_Measure_Last_year", [Achievment Measure Last year]
+    )
+
+  VAR __DS0PrimaryWindowed = 
+    TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
+
+  EVALUATE
+    __DS0PrimaryWindowed
+
+  ORDER BY
+    [IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]

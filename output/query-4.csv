@@ -1,0 +1,9 @@
+dim_product[product_name],[IsGrandTotalRowTotal],[Total_YTD],[Target_YTD],[Achievment_Status],[Varriance],[v__Varriance]
+,True,13075,12556,Achieved,519,0.04133482000637145
+Amoxicillin,False,3401,3333,Achieved,68,0.0204020402040204
+Decolgen,False,808,769,Achieved,39,0.05071521456436931
+Intunal,False,527,518,Achieved,9,0.017374517374517374
+Inzana,False,587,560,Achieved,27,0.048214285714285716
+Neurobion,False,1645,1582,Achieved,63,0.03982300884955752
+OBH Combi,False,3135,2930,Achieved,205,0.06996587030716724
+Sanmol,False,2972,2864,Achieved,108,0.03770949720670391

@@ -1,353 +1,82 @@
-import msal
-import requests
-import pandas as pd
 import os
 from dotenv import load_dotenv
+from src.authenticate import authentication
+from src.import_from_dir import load_queries_from_dir
+from src.import_from_yaml import load_query_from_yaml
+from src.multiple_execute_query import multiple_execute_dax_query
+from src.export_to_excel import export_to_excel_multisheet
+from src.logger import configure_basic_logging, get_logger
+from datetime import datetime
+import time
 
-# 1. Authenticate
-def authentication(client_id, authority, client_secret):
-    app = msal.ConfidentialClientApplication(
-        client_id,
-        authority=AUTHORITY,
-        client_credential=client_secret,
-    )
 
-    token_result = app.acquire_token_for_client(scopes=SCOPE)
 
-    if "access_token" not in token_result:
-        raise Exception("Failed to get access token")
+# Configuration
+load_dotenv()
+client_id = os.getenv("client_id")
+tenant_id = os.getenv("tenant_id")
+dataset_id = os.getenv("dataset_id")
+client_secret = os.getenv("client_secret")
+AUTHORITY = f"https://login.microsoftonline.com/{tenant_id}"
+SCOPE = ["https://analysis.windows.net/powerbi/api/.default"]
 
-    access_token = token_result["access_token"]
 
-    return access_token
-    
-# 2. DAX Query
-def execute_dax_query(access_token, dataset_id, dax_query):
-    url = f"https://api.powerbi.com/v1.0/myorg/datasets/{dataset_id}/executeQueries"
+def start_process():
+	# Set up logging
+	configure_basic_logging(logfile="logs/project.log")
+	logger = get_logger(__name__)
 
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json"
-    }
-    dax_query = {
-            "queries": [{"query": dax_query}],
-        "serializerSettings": {
-            "includeNulls": True}
-        }
-    
-    response = requests.post(url, json=dax_query, headers=headers)
+	logger.info("Starting the process to execute DAX queries and export results.")
+	start_ts = datetime.now().isoformat()
+	start = time.perf_counter()
 
-    if response.status_code != 200:
-        print("Error:", response.text)
-        raise Exception("Query failed")
+	logger.info("Loading DAX queries from .dax or .yaml files in the 'queries' directory.")
+	# First way of import dax query using dax format files.
+	project_root = os.path.dirname(os.path.abspath(__file__))
+	queries_dir = os.path.join(project_root, "queries")
+	file_fdax_queries = load_queries_from_dir(queries_dir, ext=".dax")
 
-    result = response.json()
+	# Second way of import dax query using yaml file.
+	file_yaml_queries = load_query_from_yaml(path="queries/queries.yaml")
+	
+	# If there are queries loaded from .dax files, use them. Otherwise, use the queries from the YAML file.
+	if file_fdax_queries: 
+		query_dict = file_fdax_queries
+	else:
+		query_dict = file_yaml_queries
 
-    return result
-    
-# 3. Parse to Pandas
-def parse_to_pandas(result):
-    data = result['results'][0]['tables'][0]['rows']
-    return pd.DataFrame(data)
+	logger.info(f"Successfully loaded {len(query_dict)} queries. Proceeding with authentication and execution.")
 
-# 4. multiple dax executor
-def multiple_execute_dax_query(access_token, dataset_id, query_dict, export=True, export_format="csv"):
-    results = {}
-    for query_name, query_dax in query_dict.items():
-        try:
-            raw_result = execute_dax_query(access_token, dataset_id, query_dax)
-            df = parse_to_pandas(raw_result)
-            results[query_name] = df
+	logger.info("Authenticating with Azure AD to obtain access token.")
+	# authentication process
+	access_token = authentication(client_id, AUTHORITY, client_secret, SCOPE)
+	logger.info("Authentication successful. Access token obtained.")
 
-            # exporting df to csv
-            if export and not df.empty:
-                if export_format == "csv":
-                    df.to_csv(f'{query_name}.csv', index=False)
-                elif export_format == "excel":
-                    df.to_excel(f"{query_name}.xlsx", index=False)
-        except Exception as e:
-            print(e)
-            results[query_name] = pd.DataFrame()
-    return results
+	logger.info("Executing DAX queries against the Power BI dataset.")
+	# Execute Query
+	all_results = multiple_execute_dax_query(
+		access_token=access_token,
+		dataset_id=dataset_id,
+		query_dict=query_dict,
+		export=True,
+		export_format="csv"
+	)
+	logger.info("Query execution completed. Results obtained for all queries.")
 
-# 5. export to excel file
-def export_to_excel_multisheet(results_dict, filename="all_output.xlsx"):
-    
-    with pd.ExcelWriter(filename, engine="openpyxl") as writer:
-        for sheet_name, df in results_dict.items():
-            if not df.empty:
-                safe_name = sheet_name[:31]
-                df.to_excel(writer, sheet_name=safe_name, index=False)
-    print(f"All file successfully load to: {filename}")
+	logger.info("Exporting results to Excel file 'output/all_output.xlsx'.")
+	# Export Output
+	export_to_excel_multisheet(all_results, filename="output/all_output.xlsx")
+	logger.info("Export completed successfully into output/all_output.xlsx.")
 
-if __name__ == "__main__":
-    # 6. Configuration
-    load_dotenv()
-    client_id = os.getenv("client_id")
-    tenant_id = os.getenv("tenant_id")
-    dataset_id = os.getenv("dataset_id")
-    client_secret = os.getenv("client_secret")
-    AUTHORITY = f"https://login.microsoftonline.com/{tenant_id}"
-    SCOPE = ["https://analysis.windows.net/powerbi/api/.default"]
-    
-	# 7. Query DAX
-    query_dict = {
-        "query-1" : """
-DEFINE 
-VAR __DS0FilterTable =
-TREATAS({"February"}, 'dim_date'[Month Name])
-
-EVALUATE
-    SUMMARIZECOLUMNS(
-        __DS0FilterTable,
-        "Total_YTD", IGNORE([Total YTD]),
-        "Target_YTD", IGNORE([Target YTD]),
-        "Total_YTD_Last_Year", IGNORE([Total YTD Last Year]),
-        "Target_YTD_Last_Year", IGNORE([Target YTD Last Year]),
-        "Varriance", IGNORE([Varriance]),
-        "Last_Year_Varriance", IGNORE([Last Year Varriance]),
-        "YoY_Growth", IGNORE([YoY Growth]),
-        "v__Varriance", IGNORE([% Varriance]),
-        "v__Varriance_Last_Year", IGNORE([% Varriance Last Year]),
-        "v__YoY_Growth", IGNORE([% YoY Growth]))
-""",    
-        "query-2" : """
-DEFINE
-	VAR __DS0FilterTable = 
-		TREATAS({"February"}, 'dim_date'[Month Name])
-
-	VAR __DS0Core = 
-		SUMMARIZECOLUMNS(
-			ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
-			__DS0FilterTable,
-			"Total_YTD", [Total YTD],
-			"Target_YTD", [Target YTD],
-			"Total_YTD_Last_Year", [Total YTD Last Year],
-			"Target_YTD_Last_Year", [Target YTD Last Year],
-			"Varriance", [Varriance],
-			"Last_Year_Varriance", [Last Year Varriance],
-			"YoY_Growth", [YoY Growth],
-			"v__Varriance", [% Varriance],
-			"v__Varriance_Last_Year", [% Varriance Last Year],
-			"v__YoY_Growth", [% YoY Growth]
-		)
-
-	VAR __DS0PrimaryWindowed = 
-		TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
-
-EVALUATE
-	__DS0PrimaryWindowed
-
-ORDER BY
-	[IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
-""",    
-        "query-3" : """
-DEFINE VAR __DS0FilterTable =
-    TREATAS({"February"}, 'dim_date'[Month Name])
-
-EVALUATE
-    SUMMARIZECOLUMNS(
-        __DS0FilterTable,
-        "Total_YTD", IGNORE([Total YTD]),
-        "Varriance", IGNORE([Varriance]),
-        "Target_YTD", IGNORE([Target YTD]),
-        "v__Varriance", IGNORE([% Varriance]))
-""",    
-        "query-4" : """
-DEFINE
-	VAR __DS0FilterTable = 
-		TREATAS({"February"}, 'dim_date'[Month Name])
-
-	VAR __ValueFilterDM1 = 
-		FILTER(
-			KEEPFILTERS(
-				SUMMARIZECOLUMNS(
-					'dim_product'[product_name],
-					__DS0FilterTable,
-					"Total_YTD", [Total YTD],
-					"Target_YTD", [Target YTD],
-					"Achievment_Status", [Achievment Status],
-					"Varriance", [Varriance],
-					"v__Varriance", [% Varriance]
-				)
-			),
-			[Achievment_Status] = "Achieved"
-		)
-
-	VAR __DS0Core = 
-		SUMMARIZECOLUMNS(
-			ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
-			__DS0FilterTable,
-			__ValueFilterDM1,
-			"Total_YTD", [Total YTD],
-			"Target_YTD", [Target YTD],
-			"Achievment_Status", [Achievment Status],
-			"Varriance", [Varriance],
-			"v__Varriance", [% Varriance]
-		)
-
-	VAR __DS0PrimaryWindowed = 
-		TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
-
-EVALUATE
-	__DS0PrimaryWindowed
-
-ORDER BY
-	[IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
-""",
-        "query-5" : """
-DEFINE
-	VAR __DS0FilterTable = 
-		TREATAS({"February"}, 'dim_date'[Month Name])
-
-	VAR __ValueFilterDM1 = 
-		FILTER(
-			KEEPFILTERS(
-				SUMMARIZECOLUMNS(
-					'dim_product'[product_name],
-					__DS0FilterTable,
-					"Total_YTD", [Total YTD],
-					"Target_YTD", [Target YTD],
-					"Achievment_Status", [Achievment Status],
-					"Varriance", [Varriance],
-					"v__Varriance", [% Varriance]
-				)
-			),
-			[Achievment_Status] <> "Achieved"
-		)
-
-	VAR __DS0Core = 
-		SUMMARIZECOLUMNS(
-			ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
-			__DS0FilterTable,
-			__ValueFilterDM1,
-			"Total_YTD", [Total YTD],
-			"Target_YTD", [Target YTD],
-			"Achievment_Status", [Achievment Status],
-			"Varriance", [Varriance],
-			"v__Varriance", [% Varriance]
-		)
-
-	VAR __DS0PrimaryWindowed = 
-		TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
-
-EVALUATE
-	__DS0PrimaryWindowed
-
-ORDER BY
-	[IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
-""", 
-        "query-6" : """
-DEFINE 
-    VAR __DS0FilterTable =
-    TREATAS({"February"}, 'dim_date'[Month Name])
-
-EVALUATE
-    SUMMARIZECOLUMNS(
-        __DS0FilterTable,
-        "Total_YTD_Last_Year", IGNORE([Total YTD Last Year]),
-        "Target_YTD_Last_Year", IGNORE([Target YTD Last Year]),
-        "Last_Year_Varriance", IGNORE([Last Year Varriance]),
-        "v__Varriance_Last_Year", IGNORE([% Varriance Last Year]))
-""",
-        "query-7" : """
-DEFINE
-	VAR __DS0FilterTable = 
-		TREATAS({"February"}, 'dim_date'[Month Name])
-
-	VAR __ValueFilterDM1 = 
-		FILTER(
-			KEEPFILTERS(
-				SUMMARIZECOLUMNS(
-					'dim_product'[product_name],
-					__DS0FilterTable,
-					"Total_YTD_Last_Year", [Total YTD Last Year],
-					"Target_YTD_Last_Year", [Target YTD Last Year],
-					"Last_Year_Varriance", [Last Year Varriance],
-					"v__Varriance_Last_Year", [% Varriance Last Year],
-					"Achievment_Measure_Last_year", [Achievment Measure Last year]
-				)
-			),
-			[Achievment_Measure_Last_year] = "Achieved"
-		)
-
-	VAR __DS0Core = 
-		SUMMARIZECOLUMNS(
-			ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
-			__DS0FilterTable,
-			__ValueFilterDM1,
-			"Total_YTD_Last_Year", [Total YTD Last Year],
-			"Target_YTD_Last_Year", [Target YTD Last Year],
-			"Last_Year_Varriance", [Last Year Varriance],
-			"v__Varriance_Last_Year", [% Varriance Last Year],
-			"Achievment_Measure_Last_year", [Achievment Measure Last year]
-		)
-
-	VAR __DS0PrimaryWindowed = 
-		TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
-
-EVALUATE
-	__DS0PrimaryWindowed
-
-ORDER BY
-	[IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
-""",
-        "query-8" : """
-DEFINE
-	VAR __DS0FilterTable = 
-		TREATAS({"February"}, 'dim_date'[Month Name])
-
-	VAR __ValueFilterDM1 = 
-		FILTER(
-			KEEPFILTERS(
-				SUMMARIZECOLUMNS(
-					'dim_product'[product_name],
-					__DS0FilterTable,
-					"Total_YTD_Last_Year", [Total YTD Last Year],
-					"Target_YTD_Last_Year", [Target YTD Last Year],
-					"Last_Year_Varriance", [Last Year Varriance],
-					"v__Varriance_Last_Year", [% Varriance Last Year],
-					"Achievment_Measure_Last_year", [Achievment Measure Last year]
-				)
-			),
-			[Achievment_Measure_Last_year] <> "Achieved"
-		)
-
-	VAR __DS0Core = 
-		SUMMARIZECOLUMNS(
-			ROLLUPADDISSUBTOTAL('dim_product'[product_name], "IsGrandTotalRowTotal"),
-			__DS0FilterTable,
-			__ValueFilterDM1,
-			"Total_YTD_Last_Year", [Total YTD Last Year],
-			"Target_YTD_Last_Year", [Target YTD Last Year],
-			"Last_Year_Varriance", [Last Year Varriance],
-			"v__Varriance_Last_Year", [% Varriance Last Year],
-			"Achievment_Measure_Last_year", [Achievment Measure Last year]
-		)
-
-	VAR __DS0PrimaryWindowed = 
-		TOPN(502, __DS0Core, [IsGrandTotalRowTotal], 0, 'dim_product'[product_name], 1)
-
-EVALUATE
-	__DS0PrimaryWindowed
-
-ORDER BY
-	[IsGrandTotalRowTotal] DESC, 'dim_product'[product_name]
-"""
-    }
-	# 8. Execute Query
-    access_token = authentication(client_id, AUTHORITY, client_secret)
-    all_results = multiple_execute_dax_query(
-        access_token=access_token,
-        dataset_id=dataset_id,
-        query_dict=query_dict,
-        export=False,
-        export_format="csv"
-    )
-	# 9. Export Output
-    export_to_excel_multisheet(all_results, filename="all_output.xlsx")
-
-    print("\nPreview output:")
-    for name, df in all_results.items():
-        print(f"\n[{name}]")
-        print(df.head(3))
+	# Preview Output
+	print("\nPreview output:")
+	for name, df in all_results.items():
+		print(f"\n[{name}]")
+		print(df.head(3))
+	
+	end = time.perf_counter()
+	end_ts = datetime.now().isoformat()
+	duration = end - start
+	logger.info(f"Process completed. Duration: {duration:.2f} seconds. Start: {start_ts}, End: {end_ts}.")
+	
+start_process()

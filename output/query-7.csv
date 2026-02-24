@@ -1,0 +1,9 @@
+dim_product[product_name],[IsGrandTotalRowTotal],[Total_YTD_Last_Year],[Target_YTD_Last_Year],[Last_Year_Varriance],[v__Varriance_Last_Year],[Achievment_Measure_Last_year]
+,True,13523,13054,469,0.03592768500076605,Achieved
+Amoxicillin,False,3299,3280,19,0.005792682926829268,Achieved
+Bisolvon,False,718,693,25,0.03607503607503607,Achieved
+Mixagrip,False,2128,1973,155,0.07856056766345666,Achieved
+Mylanta,False,1471,1392,79,0.05675287356321839,Achieved
+Panadol,False,2171,2068,103,0.049806576402321084,Achieved
+Promag,False,1803,1781,22,0.012352610892756879,Achieved
+Woods,False,1933,1867,66,0.03535083020889127,Achieved

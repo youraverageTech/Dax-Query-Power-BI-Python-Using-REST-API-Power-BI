@@ -1,0 +1,11 @@
+DEFINE 
+    VAR __DS0FilterTable =
+    TREATAS({"February"}, 'dim_date'[Month Name])
+
+EVALUATE
+    SUMMARIZECOLUMNS(
+        __DS0FilterTable,
+        "Total_YTD_Last_Year", IGNORE([Total YTD Last Year]),
+        "Target_YTD_Last_Year", IGNORE([Target YTD Last Year]),
+        "Last_Year_Varriance", IGNORE([Last Year Varriance]),
+        "v__Varriance_Last_Year", IGNORE([% Varriance Last Year]))

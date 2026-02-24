@@ -1,0 +1,86 @@
+2026-02-24 13:47:19,797 INFO __main__: Starting the process to execute DAX queries and export results.
+2026-02-24 13:47:19,798 INFO __main__: Loading DAX queries from .dax or .yaml files in the 'queries' directory.
+2026-02-24 13:47:19,814 INFO __main__: Successfully loaded 8 queries. Proceeding with authentication and execution.
+2026-02-24 13:47:19,815 INFO __main__: Authenticating with Azure AD to obtain access token.
+2026-02-24 13:47:20,752 INFO __main__: Authentication successful. Access token obtained.
+2026-02-24 13:47:20,753 INFO __main__: Executing DAX queries against the Power BI dataset.
+2026-02-24 13:47:20,753 INFO src.multiple_execute_query: Starting query 'query-1' (len=658 chars)
+2026-02-24 13:47:24,426 INFO src.multiple_execute_query: Query 'query-1' completed in 3.673s; rows=1
+2026-02-24 13:47:24,427 INFO src.multiple_execute_query: Starting query 'query-2' (len=825 chars)
+2026-02-24 13:47:25,762 INFO src.multiple_execute_query: Query 'query-2' completed in 1.335s; rows=31
+2026-02-24 13:47:25,762 INFO src.multiple_execute_query: Starting query 'query-3' (len=312 chars)
+2026-02-24 13:47:26,308 INFO src.multiple_execute_query: Query 'query-3' completed in 0.545s; rows=1
+2026-02-24 13:47:26,308 INFO src.multiple_execute_query: Starting query 'query-4' (len=980 chars)
+2026-02-24 13:47:26,887 INFO src.multiple_execute_query: Query 'query-4' completed in 0.579s; rows=8
+2026-02-24 13:47:26,887 INFO src.multiple_execute_query: Starting query 'query-5' (len=981 chars)
+2026-02-24 13:47:27,897 INFO src.multiple_execute_query: Query 'query-5' completed in 1.010s; rows=24
+2026-02-24 13:47:27,897 INFO src.multiple_execute_query: Starting query 'query-6' (len=397 chars)
+2026-02-24 13:47:28,729 INFO src.multiple_execute_query: Query 'query-6' completed in 0.832s; rows=1
+2026-02-24 13:47:28,729 INFO src.multiple_execute_query: Starting query 'query-7' (len=1195 chars)
+2026-02-24 13:47:29,331 INFO src.multiple_execute_query: Query 'query-7' completed in 0.602s; rows=8
+2026-02-24 13:47:29,331 INFO src.multiple_execute_query: Starting query 'query-8' (len=1196 chars)
+2026-02-24 13:47:29,945 INFO src.multiple_execute_query: Query 'query-8' completed in 0.614s; rows=24
+2026-02-24 13:47:29,945 INFO __main__: Query execution completed. Results obtained for all queries.
+2026-02-24 13:47:29,945 INFO __main__: Exporting results to Excel file 'all_output.xlsx'.
+2026-02-24 13:47:30,213 INFO __main__: Export completed successfully.
+2026-02-24 13:47:30,330 INFO __main__: Process completed. Duration: 10.53 seconds. Start: 2026-02-24T13:47:19.798129, End: 2026-02-24T13:47:30.330927.
+2026-02-24 13:49:25,073 INFO __main__: Starting the process to execute DAX queries and export results.
+2026-02-24 13:49:25,074 INFO __main__: Loading DAX queries from .dax or .yaml files in the 'queries' directory.
+2026-02-24 13:49:25,085 INFO __main__: Successfully loaded 8 queries. Proceeding with authentication and execution.
+2026-02-24 13:49:25,086 INFO __main__: Authenticating with Azure AD to obtain access token.
+2026-02-24 13:49:25,726 INFO __main__: Authentication successful. Access token obtained.
+2026-02-24 13:49:25,726 INFO __main__: Executing DAX queries against the Power BI dataset.
+2026-02-24 13:49:25,727 INFO src.multiple_execute_query: Starting query 'query-1' (len=658 chars)
+2026-02-24 13:49:26,474 INFO src.multiple_execute_query: Query 'query-1' completed in 0.747s; rows=1
+2026-02-24 13:49:26,474 INFO src.multiple_execute_query: Starting query 'query-2' (len=825 chars)
+2026-02-24 13:49:27,163 INFO src.multiple_execute_query: Query 'query-2' completed in 0.689s; rows=31
+2026-02-24 13:49:27,163 INFO src.multiple_execute_query: Starting query 'query-3' (len=312 chars)
+2026-02-24 13:49:27,633 INFO src.multiple_execute_query: Query 'query-3' completed in 0.469s; rows=1
+2026-02-24 13:49:27,633 INFO src.multiple_execute_query: Starting query 'query-4' (len=980 chars)
+2026-02-24 13:49:28,364 INFO src.multiple_execute_query: Query 'query-4' completed in 0.731s; rows=8
+2026-02-24 13:49:28,364 INFO src.multiple_execute_query: Starting query 'query-5' (len=981 chars)
+2026-02-24 13:49:29,138 INFO src.multiple_execute_query: Query 'query-5' completed in 0.774s; rows=24
+2026-02-24 13:49:29,139 INFO src.multiple_execute_query: Starting query 'query-6' (len=397 chars)
+2026-02-24 13:49:29,750 INFO src.multiple_execute_query: Query 'query-6' completed in 0.611s; rows=1
+2026-02-24 13:49:29,750 INFO src.multiple_execute_query: Starting query 'query-7' (len=1195 chars)
+2026-02-24 13:49:30,377 INFO src.multiple_execute_query: Query 'query-7' completed in 0.627s; rows=8
+2026-02-24 13:49:30,378 INFO src.multiple_execute_query: Starting query 'query-8' (len=1196 chars)
+2026-02-24 13:49:31,594 INFO src.multiple_execute_query: Query 'query-8' completed in 1.216s; rows=24
+2026-02-24 13:49:31,594 INFO __main__: Query execution completed. Results obtained for all queries.
+2026-02-24 13:49:31,594 INFO __main__: Exporting results to Excel file 'output/all_output.xlsx'.
+2026-02-24 13:49:31,790 INFO __main__: Export completed successfully.
+2026-02-24 13:49:31,895 INFO __main__: Process completed. Duration: 6.82 seconds. Start: 2026-02-24T13:49:25.074089, End: 2026-02-24T13:49:31.895244.
+2026-02-24 13:50:18,480 INFO __main__: Starting the process to execute DAX queries and export results.
+2026-02-24 13:50:18,480 INFO __main__: Loading DAX queries from .dax or .yaml files in the 'queries' directory.
+2026-02-24 13:50:18,492 INFO __main__: Successfully loaded 8 queries. Proceeding with authentication and execution.
+2026-02-24 13:50:18,493 INFO __main__: Authenticating with Azure AD to obtain access token.
+2026-02-24 13:50:19,619 INFO __main__: Authentication successful. Access token obtained.
+2026-02-24 13:50:19,619 INFO __main__: Executing DAX queries against the Power BI dataset.
+2026-02-24 13:50:19,620 INFO src.multiple_execute_query: Starting query 'query-1' (len=658 chars)
+2026-02-24 13:50:20,440 INFO src.multiple_execute_query: Query 'query-1' completed in 0.820s; rows=1
+2026-02-24 13:50:20,446 INFO src.multiple_execute_query: Exported 'query-1' to query-1.csv
+2026-02-24 13:50:20,447 INFO src.multiple_execute_query: Starting query 'query-2' (len=825 chars)
+2026-02-24 13:50:21,141 INFO src.multiple_execute_query: Query 'query-2' completed in 0.694s; rows=31
+2026-02-24 13:50:21,143 INFO src.multiple_execute_query: Exported 'query-2' to query-2.csv
+2026-02-24 13:50:21,143 INFO src.multiple_execute_query: Starting query 'query-3' (len=312 chars)
+2026-02-24 13:50:21,854 INFO src.multiple_execute_query: Query 'query-3' completed in 0.711s; rows=1
+2026-02-24 13:50:21,855 INFO src.multiple_execute_query: Exported 'query-3' to query-3.csv
+2026-02-24 13:50:21,856 INFO src.multiple_execute_query: Starting query 'query-4' (len=980 chars)
+2026-02-24 13:50:23,103 INFO src.multiple_execute_query: Query 'query-4' completed in 1.247s; rows=8
+2026-02-24 13:50:23,104 INFO src.multiple_execute_query: Exported 'query-4' to query-4.csv
+2026-02-24 13:50:23,104 INFO src.multiple_execute_query: Starting query 'query-5' (len=981 chars)
+2026-02-24 13:50:23,670 INFO src.multiple_execute_query: Query 'query-5' completed in 0.565s; rows=24
+2026-02-24 13:50:23,671 INFO src.multiple_execute_query: Exported 'query-5' to query-5.csv
+2026-02-24 13:50:23,672 INFO src.multiple_execute_query: Starting query 'query-6' (len=397 chars)
+2026-02-24 13:50:24,206 INFO src.multiple_execute_query: Query 'query-6' completed in 0.535s; rows=1
+2026-02-24 13:50:24,208 INFO src.multiple_execute_query: Exported 'query-6' to query-6.csv
+2026-02-24 13:50:24,208 INFO src.multiple_execute_query: Starting query 'query-7' (len=1195 chars)
+2026-02-24 13:50:24,740 INFO src.multiple_execute_query: Query 'query-7' completed in 0.532s; rows=8
+2026-02-24 13:50:24,741 INFO src.multiple_execute_query: Exported 'query-7' to query-7.csv
+2026-02-24 13:50:24,742 INFO src.multiple_execute_query: Starting query 'query-8' (len=1196 chars)
+2026-02-24 13:50:25,765 INFO src.multiple_execute_query: Query 'query-8' completed in 1.023s; rows=24
+2026-02-24 13:50:25,767 INFO src.multiple_execute_query: Exported 'query-8' to query-8.csv
+2026-02-24 13:50:25,767 INFO __main__: Query execution completed. Results obtained for all queries.
+2026-02-24 13:50:25,767 INFO __main__: Exporting results to Excel file 'output/all_output.xlsx'.
+2026-02-24 13:50:25,971 INFO __main__: Export completed successfully.
+2026-02-24 13:50:26,071 INFO __main__: Process completed. Duration: 7.59 seconds. Start: 2026-02-24T13:50:18.480532, End: 2026-02-24T13:50:26.071905.

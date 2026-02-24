@@ -1,0 +1,25 @@
+dim_product[product_name],[IsGrandTotalRowTotal],[Total_YTD],[Target_YTD],[Achievment_Status],[Varriance],[v__Varriance]
+,True,33993,35670,Not Achieved,-1677,-0.04701429772918419
+Antangin,False,1169,1175,Not Achieved,-6,-0.005106382978723404
+Asam Mefenamat,False,880,891,Not Achieved,-11,-0.012345679012345678
+Bisolvon,False,597,646,Not Achieved,-49,-0.07585139318885449
+Bodrex,False,3774,3803,Not Achieved,-29,-0.0076255587693925845
+Bodrexin,False,713,757,Not Achieved,-44,-0.05812417437252312
+CTM,False,1446,1555,Not Achieved,-109,-0.07009646302250803
+Feminax,False,537,564,Not Achieved,-27,-0.047872340425531915
+Komix,False,693,702,Not Achieved,-9,-0.01282051282051282
+Mixagrip,False,2070,2187,Not Achieved,-117,-0.053497942386831275
+Mylanta,False,1382,1595,Not Achieved,-213,-0.1335423197492163
+Panadol,False,2054,2087,Not Achieved,-33,-0.01581217057977959
+Paracetamol,False,1941,2103,Not Achieved,-162,-0.07703281027104136
+Paramex,False,2163,2314,Not Achieved,-151,-0.06525496974935177
+Polysilane,False,1284,1324,Not Achieved,-40,-0.030211480362537766
+Ponstan,False,511,522,Not Achieved,-11,-0.0210727969348659
+Procold,False,2643,2726,Not Achieved,-83,-0.03044754218635363
+Promag,False,1733,1807,Not Achieved,-74,-0.04095185390149419
+Sangobion,False,1678,1809,Not Achieved,-131,-0.07241569928137093
+Tolak Angin,False,1663,1848,Not Achieved,-185,-0.1001082251082251
+Vicks Formula 44,False,714,723,Not Achieved,-9,-0.012448132780082987
+Vitamin B Complex,False,1308,1386,Not Achieved,-78,-0.05627705627705628
+Vitamin C,False,897,980,Not Achieved,-83,-0.08469387755102041
+Woods,False,2143,2166,Not Achieved,-23,-0.01061865189289012
