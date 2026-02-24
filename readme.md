@@ -38,6 +38,7 @@ dataset_id=YOUR_POWERBI_DATASET_ID
 - `main.py` — the main script containing authentication, DAX execution, parsing to pandas, and export functions.
 - `readme_en.md` — documentation of the project.
 - `.env` — environment configuration (user-provided).
+- `requirments.txt` - libraries python needed for this project.
 - `all_output.xlsx` — output file containing results of all queries.
 
 ## Workflow
