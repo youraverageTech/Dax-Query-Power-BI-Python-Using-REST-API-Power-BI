@@ -35,7 +35,7 @@ client_secret=YOUR_CLIENT_SECRET
 dataset_id=YOUR_POWERBI_DATASET_ID
 ```
 
-## Brief file structure
+## File structure
 - `main.py` — the main script to execute project.
 - `readme_en.md` — documentation of the project.
 - `.env` — environment configuration (user-provided).
@@ -54,7 +54,7 @@ dataset_id=YOUR_POWERBI_DATASET_ID
 - `logs` - all logs information stored.
 - `output` - all outputs stored.
 
-### Diagram — Brief File Structure (current)
+### Diagram File Structure
 
 ```
 Project_test/
@@ -86,10 +86,10 @@ Project_test/
    - Create an app registration and note `client_id`, `tenant_id`, and `client_secret`.
    - Grant application permissions for the Power BI API and provide admin consent (admin/contributor).
 4. Add the configuration values to the `.env` file.
-   - client_id
-   - tenant_id
-   - dataset_id
-   - client_secret
+   - `client_id`
+   - `tenant_id`
+   - `dataset_id`
+   - `client_secret`
 5. Install local dependencies:
 
 ```bash
