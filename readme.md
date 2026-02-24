@@ -1,8 +1,8 @@
-# Project — DAX Query Power BI via Python
+# Project — DAX Query Power BI via Python Using Power BI REST API
 This documentation explains the project purpose, tools/libraries used, configuration, and the workflow to run DAX queries against Power BI and export the results.
 
 ## Summary
-This Python script retrieves data/insights from a Power BI dataset using DAX queries.
+This Python script retrieves data/insights from a Power BI dataset using DAX queries and Power BI REST API for the connection.
 
 ## Tools / Dependencies
 - Python.
